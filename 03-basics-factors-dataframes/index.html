@@ -1,0 +1,962 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="Genomics Aotearoa" name="author"/>
+<link href="https://genomicsaotearoa.github.io/Introduction-to-R/03-basics-factors-dataframes/" rel="canonical"/>
+<link href="../02-data-prelude/" rel="prev"/>
+<link href="../04-bioconductor-vcfr/" rel="next"/>
+<link href="../theme_figures/nesi_ga.png" rel="icon"/>
+<meta content="mkdocs-1.4.2, mkdocs-material-9.0.13" name="generator"/>
+<title>R Basics continued - factors and data frames - Introduction to R</title>
+<link href="../assets/stylesheets/main.ffa9267a.min.css" rel="stylesheet"/>
+<link href="../assets/stylesheets/palette.a0c5b2b5.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Mukta:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Mukta";--md-code-font:"Roboto Mono"}</style>
+<link href="../stylesheets/extra.css" rel="stylesheet"/>
+<script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+<link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            
+                .gscrollbar-fixer { padding-right: 15px; }
+                .gdesc-inner { font-size: 0.75rem; }
+                body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+                body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+                body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}
+                </style><script src="../assets/javascripts/glightbox.min.js"></script></head>
+<body data-md-color-accent="" data-md-color-primary="indigo" data-md-color-scheme="default" dir="ltr">
+<script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#r-basics-continued-factors-and-data-frames">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Introduction to R" class="md-header__button md-logo" data-md-component="logo" href=".." title="Introduction to R">
+<img alt="logo" src="../theme_figures/nesi_ga.png"/>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Introduction to R
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              R Basics continued - factors and data frames
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="" data-md-color-media="(prefers-color-scheme)" data-md-color-primary="indigo" data-md-color-scheme="default" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_3" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9h-1.9M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69m-9.15 3.96h2.3L12 9l-1.15 3.65Z"></path></svg>
+</label>
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="" data-md-color-media="(prefers-color-scheme: light)" data-md-color-primary="indigo" data-md-color-scheme="default" id="__palette_2" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"></path></svg>
+</label>
+<input aria-label="Switch to system preference" class="md-option" data-md-color-accent="" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-primary="indigo" data-md-color-scheme="slate" id="__palette_3" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_2" hidden="" title="Switch to system preference">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"></path></svg>
+</label>
+</form>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"></path></svg>
+</button>
+</nav>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list" role="presentation"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/GenomicsAotearoa/Introduction-to-R" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    GenomicsAotearoa/Introduction-to-R
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Introduction to R" class="md-nav__button md-logo" data-md-component="logo" href=".." title="Introduction to R">
+<img alt="logo" src="../theme_figures/nesi_ga.png"/>
+</a>
+    Introduction to R
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/GenomicsAotearoa/Introduction-to-R" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    GenomicsAotearoa/Introduction-to-R
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="..">
+        Home
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../00-introduction/">
+        Introducing R and RStudio IDE
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../01-r-basics/">
+        R Basics
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../02-data-prelude/">
+        Introduction to the example dataset and file type
+      </a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+          R Basics continued - factors and data frames
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+        R Basics continued - factors and data frames
+      </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#working-with-spreadsheets-tabular-data">
+    Working with spreadsheets (tabular data)
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tip-keeping-you-raw-data-separate">
+    Tip: Keeping you raw data separate
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#importing-tabular-data-into-r">
+    Importing tabular data into R
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exercise-review-the-arguments-of-the-readcsv-function">
+    Exercise: Review the arguments of the read.csv() function
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#solution">
+    Solution
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#summarizing-subsetting-and-determining-the-structure-of-a-data-frame">
+    Summarizing, subsetting, and determining the structure of a data frame.
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tip-treating-objects-as-categories-without-changing-their-mode">
+    Tip: treating objects as categories without changing their mode
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#plotting-and-ordering-factors">
+    Plotting and ordering factors
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tip-packages-in-r-what-are-they-and-why-do-we-use-them">
+    Tip: Packages in R -- what are they and why do we use them?
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#subsetting-data-frames">
+    Subsetting data frames
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exercise-subsetting-a-data-frame">
+    Exercise: Subsetting a data frame
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#solution_1">
+    Solution
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../04-bioconductor-vcfr/">
+        Using packages from Bioconductor
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../05-dplyr/">
+        Data Wrangling and Analyses with Tidyverse
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../06-data-visualization/">
+        Data Visualization with ggplot2
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../07-knitr-markdown/">
+        Producing Reports With knitr
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../08-r-help/">
+        Getting help with R
+      </a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#working-with-spreadsheets-tabular-data">
+    Working with spreadsheets (tabular data)
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tip-keeping-you-raw-data-separate">
+    Tip: Keeping you raw data separate
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#importing-tabular-data-into-r">
+    Importing tabular data into R
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exercise-review-the-arguments-of-the-readcsv-function">
+    Exercise: Review the arguments of the read.csv() function
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#solution">
+    Solution
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#summarizing-subsetting-and-determining-the-structure-of-a-data-frame">
+    Summarizing, subsetting, and determining the structure of a data frame.
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tip-treating-objects-as-categories-without-changing-their-mode">
+    Tip: treating objects as categories without changing their mode
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#plotting-and-ordering-factors">
+    Plotting and ordering factors
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tip-packages-in-r-what-are-they-and-why-do-we-use-them">
+    Tip: Packages in R -- what are they and why do we use them?
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#subsetting-data-frames">
+    Subsetting data frames
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exercise-subsetting-a-data-frame">
+    Exercise: Subsetting a data frame
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#solution_1">
+    Solution
+  </a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<h1 id="r-basics-continued-factors-and-data-frames">R Basics continued - factors and data frames<a class="headerlink" href="#r-basics-continued-factors-and-data-frames" title="Permanent link">¶</a></h1>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>keypoints:</p>
+<ul>
+<li>It is easy to import data into R from tabular formats including Excel.
+  However, you still need to check that R has imported and interpreted
+  your data correctly</li>
+<li>There are best practices for organizing your data (keeping it tidy)
+  and R is great for this</li>
+<li>Base R has many useful functions for manipulating your data, but all
+  of R's capabilities are greatly enhanced by software packages
+  developed by the community</li>
+</ul>
+<p>objectives:</p>
+<ul>
+<li>Explain the basic principle of tidy datasets</li>
+<li>Be able to load a tabular dataset using base R functions</li>
+<li>Be able to determine the structure of a data frame including its
+  dimensions and the datatypes of variables</li>
+<li>Be able to subset/retrieve values from a data frame</li>
+<li>Understand how R may coerce data into different modes</li>
+<li>Be able to change the mode of an object</li>
+<li>Understand that R uses factors to store and manipulate categorical
+  data</li>
+<li>Be able to manipulate a factor, including subsetting and reordering</li>
+<li>Be able to apply an arithmetic function to a data frame</li>
+<li>Be able to coerce the class of an object (including variables in a
+  data frame)</li>
+<li>Be able to import data from Excel</li>
+<li>Be able to save a data frame as a delimited file</li>
+</ul>
+<p>questions:</p>
+<ul>
+<li>How do I get started with tabular data (e.g. spreadsheets) in R?</li>
+<li>What are some best practices for reading data into R?</li>
+<li>How do I save tabular data generated in R?</li>
+</ul>
+</div>
+<h2 id="working-with-spreadsheets-tabular-data">Working with spreadsheets (tabular data)<a class="headerlink" href="#working-with-spreadsheets-tabular-data" title="Permanent link">¶</a></h2>
+<p>A substantial amount of the data we work with in genomics will be
+tabular data, this is data arranged in rows and columns - also known as
+spreadsheets. We could write a whole lesson on how to work with
+spreadsheets effectively (<a href="https://datacarpentry.org/organization-genomics/">actually we
+did</a>). For our
+purposes, we want to remind you of a few principles before we work with
+our first set of example data:</p>
+<p><strong>1) Keep raw data separate from analyzed data</strong></p>
+<p>This is principle number one because if you can't tell which files are
+the original raw data, you risk making some serious mistakes
+(e.g. drawing conclusion from data which have been manipulated in some
+unknown way).</p>
+<p><strong>2) Keep spreadsheet data Tidy</strong></p>
+<p>The simplest principle of <strong>Tidy data</strong> is that we have one row in our
+spreadsheet for each observation or sample, and one column for every
+variable that we measure or report on. As simple as this sounds, it's
+very easily violated. Most data scientists agree that significant
+amounts of their time is spent tidying data for analysis. Read more
+about data organization in <a href="https://datacarpentry.org/organization-genomics/">our
+lesson</a> and in <a href="https://www.jstatsoft.org/article/view/v059i10">this
+paper</a>.</p>
+<p><strong>3) Trust but verify</strong></p>
+<p>Finally, while you don't need to be paranoid about data, you should have
+a plan for how you will prepare it for analysis. <strong>This a focus of this
+lesson.</strong> You probably already have a lot of intuition, expectations,
+assumptions about your data - the range of values you expect, how many
+values should have been recorded, etc. Of course, as the data get larger
+our human ability to keep track will start to fail (and yes, it can fail
+for small data sets too). R will help you to examine your data so that
+you can have greater confidence in your analysis, and its
+reproducibility.</p>
+<blockquote>
+<h2 id="tip-keeping-you-raw-data-separate">Tip: Keeping you raw data separate<a class="headerlink" href="#tip-keeping-you-raw-data-separate" title="Permanent link">¶</a></h2>
+<p>When you work with data in R, you are not changing the original file
+you loaded that data from. This is different than (for example)
+working with a spreadsheet program where changing the value of the
+cell leaves you one "save"-click away from overwriting the original
+file. You have to purposely use a writing function
+(e.g. <code>write.csv()</code>) to save data loaded into R. In that case, be sure
+to save the manipulated data into a new file. More on this later in
+the lesson. {: .callout}</p>
+</blockquote>
+<h2 id="importing-tabular-data-into-r">Importing tabular data into R<a class="headerlink" href="#importing-tabular-data-into-r" title="Permanent link">¶</a></h2>
+<p>There are several ways to import data into R. For our purpose here, we
+will focus on using the tools every R installation comes with (so called
+"base" R) to import a comma-delimited file containing the results of our
+variant calling workflow. We will need to load the sheet using a
+function called <code>read.csv()</code>.</p>
+<blockquote>
+<h2 id="exercise-review-the-arguments-of-the-readcsv-function">Exercise: Review the arguments of the <code>read.csv()</code> function<a class="headerlink" href="#exercise-review-the-arguments-of-the-readcsv-function" title="Permanent link">¶</a></h2>
+<p><strong>Before using the <code>read.csv()</code> function, use R's help feature to
+answer the following questions</strong>.</p>
+<p><em>Hint</em>: Entering '?' before the function name and then running that
+line will bring up the help documentation. Also, when reading this
+particular help be careful to pay attention to the 'read.csv'
+expression under the 'Usage' heading. Other answers will be in the
+'Arguments' heading.</p>
+<p>A)  What is the default parameter for 'header' in the <code>read.csv()</code>
+    function?</p>
+<p>B)  What argument would you have to change to read a file that was
+    delimited by semicolons (;) rather than commas?</p>
+<p>C)  What argument would you have to change to read file in which
+    numbers used commas for decimal separation (i.e. 1,00)?</p>
+<p>D)  What argument would you have to change to read in only the first
+    10,000 rows of a very large file?</p>
+<blockquote>
+<h2 id="solution">Solution<a class="headerlink" href="#solution" title="Permanent link">¶</a></h2>
+<p>A)  The <code>read.csv()</code> function has the argument 'header' set to TRUE
+    by default, this means the function always assumes the first row
+    is header information, (i.e. column names)</p>
+<p>B)  The <code>read.csv()</code> function has the argument 'sep' set to ",".
+    This means the function assumes commas are used as delimiters,
+    as you would expect. Changing this parameter (e.g. <code>sep=";"</code>)
+    would now interpret semicolons as delimiters.</p>
+<p>C)  Although it is not listed in the <code>read.csv()</code> usage,
+    <code>read.csv()</code> is a "version" of the function <code>read.table()</code> and
+    accepts all its arguments. If you set <code>dec=","</code> you could change
+    the decimal operator. We'd probably assume the delimiter is some
+    other character.</p>
+<p>D)  You can set <code>nrow</code> to a numeric value (e.g. <code>nrow=10000</code>) to
+    choose how many rows of a file you read in. This may be useful
+    for very large files where not all the data is needed to test
+    some data cleaning steps you are applying.</p>
+<p>Hopefully, this exercise gets you thinking about using the provided
+help documentation in R. There are many arguments that exist, but
+which we wont have time to cover. Look here to get familiar with
+functions you use frequently, you may be surprised at what you find
+they can do. {: .solution} {: .challenge}</p>
+</blockquote>
+</blockquote>
+<p>Now, let's read in the file <code>combined_tidy_vcf.csv</code> which will be
+located in <code>/home/dcuser/r_data/</code>. Call this data <code>variants</code>. The first
+argument to pass to our <code>read.csv()</code> function is the file path for our
+data. The file path must be in quotes and now is a good time to remember
+to use tab autocompletion. <strong>If you use tab autocompletion you avoid
+typos and errors in file paths.</strong> Use it!</p>
+<p>```{r, eval = FALSE, purl = FALSE} ## read in a CSV file and save it
+as 'variants'</p>
+<p>variants \&lt;- read.csv("/home/dcuser/r_data/combined_tidy_vcf.csv")</p>
+<div class="highlight"><pre><span></span><code>```{r, echo = FALSE, eval = TRUE, purl = FALSE}
+## silently read in CSV file from FigShare
+
+variants &lt;- read.csv("https://ndownloader.figshare.com/files/14632895")
+</code></pre></div>
+<p>One of the first things you should notice is that in the Environment
+window, you have the <code>variants</code> object, listed as 801 obs.
+(observations/rows) of 29 variables (columns). Double-clicking on the
+name of the object will open a view of the data in a new tab.</p>
+<p><code>&lt;img src="../fig/rstudio_dataframeview.png" alt="rstudio data frame view" style="width: 1000px;"/&gt;</code></p>
+<h2 id="summarizing-subsetting-and-determining-the-structure-of-a-data-frame">Summarizing, subsetting, and determining the structure of a data frame.<a class="headerlink" href="#summarizing-subsetting-and-determining-the-structure-of-a-data-frame" title="Permanent link">¶</a></h2>
+<p>A <strong>data frame is the standard way in R to store tabular data</strong>. A data
+fame could also be thought of as a collection of vectors, all of which
+have the same length. Using only two functions, we can learn a lot about
+out data frame including some summary statistics as well as well as the
+"structure" of the data frame. Let's examine what each of these
+functions can tell us:</p>
+<p>```{r, purl = FALSE} ## get summary statistics on a data frame</p>
+<p>summary(variants)</p>
+<div class="highlight"><pre><span></span><code>Our data frame had 29 variables, so we get 29 fields that summarize the data.
+The `QUAL`, `IMF`, and `VDB` variables (and several others) are
+numerical data and so you get summary statistics on the min and max values for
+these columns, as well as mean, median, and interquartile ranges. Many of the
+other variables (e.g. `sample_id`) are treated as characters data (more on this
+in a bit).
+
+There is a lot to work with, so we will subset the first three columns into a
+new data frame using the `data.frame()` function.
+
+```{r, purl = FALSE}
+## put the first three columns of variants into a new data frame called subset
+
+subset&lt;-data.frame(variants[,c(1:3,6)])
+</code></pre></div>
+<p>Now, let's use the <code>str()</code> (structure) function to look a little more
+closely at how data frames work:</p>
+<p>```{r, purl = FALSE} ## get the structure of a data frame</p>
+<p>str(subset)</p>
+<div class="highlight"><pre><span></span><code>Ok, thats a lot up unpack! Some things to notice.
+
+- the object type `data.frame` is displayed in the first row along with its
+  dimensions, in this case 801 observations (rows) and 4 variables (columns)
+- Each variable (column) has a name (e.g. `sample_id`). This is followed
+  by the object mode (e.g. chr, int, etc.). Notice that before each
+  variable name there is a `$` - this will be important later.
+
+## Introducing Factors
+
+Factors are the final major data structure we will introduce in our R genomics
+lessons. Factors can be thought of as vectors which are specialized for
+categorical data. Given R's specialization for statistics, this make sense since
+categorial and continuous variables are usually treated differently. Sometimes
+you may want to have data treated as a factor, but in other cases, this may be
+undesirable.
+
+Let's see the value of treating some of which are categorical in nature as
+factors. Let's take a look at just the alternate alleles
+
+```{r, purl = FALSE}
+## extract the "ALT" column to a new object
+
+alt_alleles &lt;- subset$ALT
+</code></pre></div>
+<p>Let's look at the first few items in our factor using <code>head()</code>:</p>
+<p><code>{r, purl = FALSE} head(alt_alleles)</code></p>
+<p>There are 801 alleles (one for each row). To simplify, lets look at just
+the single-nuleotide alleles (SNPs). We can use some of the vector
+indexing skills from the last episode.</p>
+<p><code>{r, purl = FALSE} snps &lt;- c(alt_alleles[alt_alleles=="A"],   alt_alleles[alt_alleles=="T"],   alt_alleles[alt_alleles=="G"],   alt_alleles[alt_alleles=="C"])</code></p>
+<p>This leaves us with a vector of the 701 alternative alleles which were
+single nucleotides. Right now, they are being treated a characters, but
+we could treat them as categories of SNP. Doing this will enable some
+nice features. For example, we can try to generate a plot of this
+character vector as it is right now:</p>
+<p><code>{r, purl = FALSE, fig.show='hide'} plot(snps)</code></p>
+<p>Whoops! Though the <code>plot()</code> function will do its best to give us a quick
+plot, it is unable to do so here. One way to fix this it to tell R to
+treat the SNPs as categories (i.e. a factor vector); we will create a
+new object to avoid confusion using the <code>factor()</code> function:</p>
+<p><code>{r, purl = FALSE} factor_snps &lt;- factor(snps)</code></p>
+<p>Let's learn a little more about this new type of vector:</p>
+<p><code>{r, purl = FALSE} str(factor_snps)</code></p>
+<p>What we get back are the categories ("A","C","G","T") in our factor;
+these are called "Levels". <strong>Levels are the different categories
+contained in a factor</strong>. By default, R will organize the levels in a
+factor in alphabetical order. So the first level in this factor is "A".</p>
+<p>For the sake of efficiency, R stores the content of a factor as a vector
+of integers, which an integer is assigned to each of the possible
+levels. Recall levels are assigned in alphabetical order. In this case,
+the first item in our <code>factor_snps</code> object is "A", which happens to be
+the 1<sup>st</sup> level of our factor, ordered alphabetically. This explains the
+sequence of "1"s ("Factor w/ 4 levels"A","C","G","T": 1 1 1 1 1 1 1 1 1
+1 ..."), since"A" is the first level, and the first few items in our
+factor are all "A"s.</p>
+<p>We can see how many items in our vector fall into each category:</p>
+<p><code>{r, purl = FALSE} summary(factor_snps)</code></p>
+<p>As you can imagine, this is already useful when you want to generate a
+tally.</p>
+<blockquote>
+<h2 id="tip-treating-objects-as-categories-without-changing-their-mode">Tip: treating objects as categories without changing their mode<a class="headerlink" href="#tip-treating-objects-as-categories-without-changing-their-mode" title="Permanent link">¶</a></h2>
+<p>You don't have to make an object a factor to get the benefits of
+treating an object as a factor. See what happens when you use the
+<code>as.factor()</code> function on <code>factor_snps</code>. To generate a tally, you can
+sometimes also use the <code>table()</code> function; though sometimes you may
+need to combine both (i.e. <code>table(as.factor(object))</code>) {: .callout}</p>
+</blockquote>
+<h2 id="plotting-and-ordering-factors">Plotting and ordering factors<a class="headerlink" href="#plotting-and-ordering-factors" title="Permanent link">¶</a></h2>
+<p>One of the most common uses for factors will be when you plot
+categorical values. For example, suppose we want to know how many of our
+variants had each possible SNP we could generate a plot:</p>
+<p><code>{r, purl = FALSE} plot(factor_snps)</code></p>
+<p>This isn't a particularly pretty example of a plot but it works. We'll
+be learning much more about creating nice, publication-quality graphics
+later in this lesson.</p>
+<p>If you recall, factors are ordered alphabetically. That might make
+sense, but categories (e.g., "red", "blue", "green") often do not have
+an intrinsic order. What if we wanted to order our plot according to the
+numerical value (i.e., in descending order of SNP frequency)? We can
+enforce an order on our factors:</p>
+<p><code>{r, purl = FALSE} ordered_factor_snps &lt;- factor(factor_snps, levels = names(sort(table(factor_snps))))</code></p>
+<p>Let's deconstruct this from the inside out (you can try each of these
+commands to see why this works):</p>
+<ol>
+<li>We create a table of <code>factor_snps</code> to get the frequency of each SNP:
+    <code>table(factor_snps)</code></li>
+<li>We sort this table: <code>sort(table(factor_snps))</code>; use the
+    <code>decreasing =</code> parameter for this function if you wanted to change
+    from the default of FALSE</li>
+<li>Using the <code>names</code> function gives us just the character names of the
+    table sorted by frequencies:<code>names(sort(table(factor_snps)))</code></li>
+<li>The <code>factor</code> function is what allows us to create a factor. We give
+    it the <code>factor_snps</code> object as input, and use the <code>levels=</code>
+    parameter to enforce the ordering of the levels.</li>
+</ol>
+<p>Now we see our plot has be reordered:</p>
+<p><code>{r, purl = FALSE} plot(ordered_factor_snps)</code></p>
+<p>Factors come in handy in many places when using R. Even using more
+sophisticated plotting packages such as ggplot2 will sometimes require
+you to understand how to manipulate factors.</p>
+<blockquote>
+<h2 id="tip-packages-in-r-what-are-they-and-why-do-we-use-them">Tip: Packages in R -- what are they and why do we use them?<a class="headerlink" href="#tip-packages-in-r-what-are-they-and-why-do-we-use-them" title="Permanent link">¶</a></h2>
+<p>Packages are simply collections of functions and/or data that can be
+used to extend the capabilities of R beyond the core functionality
+that comes with it by default. There are useful R packages available
+that span all types of statistical analysis, data visualization, and
+more. The main place that R packages are installed from is a website
+called <a href="https://cran.r-project.org/">CRAN</a> (the Comprehensive R
+Archive Network). Many thousands of R packages are available there,
+and when you use the built-in R function <code>install.packages()</code>, it will
+look for a CRAN repository to install from. So, for example, to
+install <a href="https://www.tidyverse.org">tidyverse</a> packages such as
+<code>dplyr</code> and <code>ggplot2</code> (which you'll do in the next few lessons), you
+would use the following command:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a># install a package from CRAN
+<a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a>install.packages("ggplot2")
+</code></pre></div>
+<p>{: .callout}</p>
+</blockquote>
+<h2 id="subsetting-data-frames">Subsetting data frames<a class="headerlink" href="#subsetting-data-frames" title="Permanent link">¶</a></h2>
+<p>Next, we are going to talk about how you can get specific values from
+data frames, and where necessary, change the mode of a column of values.</p>
+<p>The first thing to remember is that a data frame is two-dimensional
+(rows and columns). Therefore, to select a specific value we will will
+once again use <code>[]</code> (bracket) notation, but we will specify more than
+one value (except in some cases where we are taking a range).</p>
+<blockquote>
+<h2 id="exercise-subsetting-a-data-frame">Exercise: Subsetting a data frame<a class="headerlink" href="#exercise-subsetting-a-data-frame" title="Permanent link">¶</a></h2>
+<p><strong>Try the following indices and functions and try to figure out what
+they return</strong></p>
+<p>a.  <code>variants[1,1]</code></p>
+<p>b.  <code>variants[2,4]</code></p>
+<p>c.  <code>variants[801,29]</code></p>
+<p>d.  <code>variants[2, ]</code></p>
+<p>e.  <code>variants[-1, ]</code></p>
+<p>f.  <code>variants[1:4,1]</code></p>
+<p>g.  <code>variants[1:10,c("REF","ALT")]</code></p>
+<p>h.  <code>variants[,c("sample_id")]</code></p>
+<p>i.  <code>head(variants)</code></p>
+<p>j.  <code>tail(variants)</code></p>
+<p>k.  <code>variants$sample_id</code></p>
+<p>l.  <code>variants[variants$REF == "A",]</code></p>
+<blockquote>
+<h2 id="solution_1">Solution<a class="headerlink" href="#solution_1" title="Permanent link">¶</a></h2>
+<p>a.  </p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a>variants[1,1]
+</code></pre></div>
+<p>b.  </p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a>variants[2,4]
+</code></pre></div>
+<p>c.  </p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a>variants[801,29]
+</code></pre></div>
+<p>d.  </p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-4-1" id="__codelineno-4-1" name="__codelineno-4-1"></a>variants[2, ]
+</code></pre></div>
+<p>e.  <code>{r, echo = TRUE, eval = FALSE} variants[-1, ]</code></p>
+<p><code>{r, echo = FALSE, eval = TRUE} head(variants[-1, ])</code></p>
+<p>f.  </p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-5-1" id="__codelineno-5-1" name="__codelineno-5-1"></a>variants[1:4,1]
+</code></pre></div>
+<p>g.  </p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-6-1" id="__codelineno-6-1" name="__codelineno-6-1"></a>variants[1:10,c("REF","ALT")]
+</code></pre></div>
+<p>h.  <code>{r, echo = TRUE, eval = FALSE} variants[,c("sample_id")]</code></p>
+<p><code>{r, echo = FALSE, eval = TRUE} head(variants[,c("sample_id")])</code></p>
+<p>i.  </p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-7-1" id="__codelineno-7-1" name="__codelineno-7-1"></a>head(variants)
+</code></pre></div>
+<p>j.  </p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-8-1" id="__codelineno-8-1" name="__codelineno-8-1"></a>tail(variants)
+</code></pre></div>
+<p>k.  <code>{r, echo = TRUE, eval = FALSE} variants$sample_id</code></p>
+<p><code>{r, echo = FALSE, eval = TRUE} head(variants$sample_id)</code></p>
+<p>l.  <code>{r, echo = TRUE, eval = FALSE} variants[variants$REF == "A",]</code></p>
+<p><code>{r, echo = FALSE, eval = TRUE} head(variants[variants$REF == "A",])</code>
+{: .solution} {: .challenge}</p>
+</blockquote>
+</blockquote>
+<p>The subsetting notation is very similar to what we learned for vectors.
+The key differences include:</p>
+<ul>
+<li>Typically provide two values separated by commas: data.frame[row,
+    column]</li>
+<li>In cases where you are taking a continuous range of numbers use a
+    colon between the numbers (start:stop, inclusive)</li>
+<li>For a non continuous set of numbers, pass a vector using <code>c()</code></li>
+<li>Index using the name of a column(s) by passing them as vectors using
+    <code>c()</code></li>
+</ul>
+<p>Finally, in all of the subsetting exercises above, we printed values to
+the screen. You can create a new data frame object by assigning them to
+a new object name:</p>
+<p>```{r, purl = FALSE} # create a new data frame containing only
+observations from SRR2584863</p>
+<p>SRR2584863_variants \&lt;- variants[variants$sample_id == "SRR2584863",]</p>
+<h1 id="check-the-dimension-of-the-data-frame">check the dimension of the data frame<a class="headerlink" href="#check-the-dimension-of-the-data-frame" title="Permanent link">¶</a></h1>
+<p>dim(SRR2584863_variants)</p>
+<h1 id="get-a-summary-of-the-data-frame">get a summary of the data frame<a class="headerlink" href="#get-a-summary-of-the-data-frame" title="Permanent link">¶</a></h1>
+<p>summary(SRR2584863_variants)</p>
+<div class="highlight"><pre><span></span><code>## Coercing values in data frames
+
+&gt; ## Tip: coercion isn't limited to data frames
+&gt;
+&gt; While we are going to address coercion in the context of data frames
+&gt; most of these methods apply to other data structures, such as vectors
+{: .callout}
+
+Sometimes, it is possible that R will misinterpret the type of data represented
+in a data frame, or store that data in a mode which prevents you from
+operating on the data the way you wish. For example, a long list of gene names
+isn't usually thought of as a categorical variable, the way that your
+experimental condition (e.g. control, treatment) might be. More importantly,
+some R packages you use to analyze your data may expect characters as input,
+not factors. At other times (such as plotting or some statistical analyses) a
+factor may be more appropriate. Ultimately, you should know how to change the
+mode of an object.
+
+First, its very important to recognize that coercion happens in R all the time.
+This can be a good thing when R gets it right, or a bad thing when the result
+is not what you expect. Consider:
+
+```{r, purl = FALSE}
+snp_chromosomes &lt;- c('3', '11', 'X', '6')
+typeof(snp_chromosomes)
+</code></pre></div>
+<p>Although there are several numbers in our vector, they are all in
+quotes, so we have explicitly told R to consider them as characters.
+However, even if we removed the quotes from the numbers, R would coerce
+everything into a character:</p>
+<p><code>{r, purl = FALSE} snp_chromosomes_2 &lt;- c(3, 11, 'X', 6) typeof(snp_chromosomes_2) snp_chromosomes_2[1]</code></p>
+<p>We can use the <code>as.</code> functions to explicitly coerce values from one form
+into another. Consider the following vector of characters, which all
+happen to be valid numbers:</p>
+<p><code>{r, purl = FALSE} snp_positions_2 &lt;- c("8762685", "66560624", "67545785", "154039662") typeof(snp_positions_2) snp_positions_2[1]</code></p>
+<p>Now we can coerce <code>snp_positions_2</code> into a numeric type using
+<code>as.numeric()</code>:</p>
+<p><code>{r, purl = FALSE} snp_positions_2 &lt;- as.numeric(snp_positions_2) typeof(snp_positions_2) snp_positions_2[1]</code></p>
+<p>Sometimes coercion is straight forward, but what would happen if we
+tried using <code>as.numeric()</code> on <code>snp_chromosomes_2</code></p>
+<p><code>{r, purl = FALSE} snp_chromosomes_2 &lt;- as.numeric(snp_chromosomes_2)</code></p>
+<p>If we check, we will see that an <code>NA</code> value (R's default value for
+missing data) has been introduced.</p>
+<p><code>{r, purl = FALSE} snp_chromosomes_2</code></p>
+<p>Trouble can really start when we try to coerce a factor. For example,
+when we try to coerce the <code>sample_id</code> column in our data frame into a
+numeric mode look at the result:</p>
+<p><code>{r, purl = FALSE} as.numeric(variants$sample_id)</code></p>
+<p>Strangely, it works! Almost. Instead of giving an error message, R
+returns numeric values, which in this case are the integers assigned to
+the levels in this factor. This kind of behavior can lead to
+hard-to-find bugs, for example when we do have numbers in a factor, and
+we get numbers from a coercion. If we don't look carefully, we may not
+notice a problem.</p>
+<p>If you need to coerce an entire column you can overwrite it using an
+expression like this one:</p>
+<p>```{r, purl = FALSE} # make the 'REF' column a character type column</p>
+<p>variants<span class="arithmatex">\(REF &lt;- as.character(variants\)</span>REF)</p>
+<h1 id="check-the-type-of-the-column">check the type of the column<a class="headerlink" href="#check-the-type-of-the-column" title="Permanent link">¶</a></h1>
+<p>typeof(variants$REF)</p>
+<div class="highlight"><pre><span></span><code>## StringsAsFactors = ?
+
+Lets summarize this section on coercion with a few take home messages.
+
+- When you explicitly coerce one data type into another (this is known as
+  **explicit coercion**), be careful to check the result. Ideally, you should try to see if its possible to avoid steps in your analysis that force you to
+  coerce.
+- R will sometimes coerce without you asking for it. This is called
+  (appropriately) **implicit coercion**. For example when we tried to create
+  a vector with multiple data types, R chose one type through implicit
+  coercion.
+- Check the structure (`str()`) of your data frames before working with them!
+
+
+&gt; ## Tip: coercion isn't limited to data frames
+&gt;
+&gt; Prior to R 4.0 when importing a data frame using any one of the `read.table()`
+&gt; functions such as `read.csv()` , the argument `StringsAsFactors` was by
+&gt; default
+&gt; set to true TRUE. Setting it to FALSE will treat any non-numeric column to
+&gt; a character type. `read.csv()` documentation, you will also see you can
+&gt; explicitly type your columns using the `colClasses` argument. Other R packages
+&gt; (such as the Tidyverse "readr") don't have this particular conversion issue,
+&gt; but many packages will still try to guess a data type.
+{: .callout}
+
+
+## Data frame bonus material: math, sorting, renaming
+
+Here are a few operations that don't need much explanation, but which are good
+to know.
+
+There are lots of arithmetic functions you may want to apply to your data
+frame, covering those would be a course in itself (there is some starting
+material [here](https://swcarpentry.github.io/r-novice-inflammation/15-supp-loops-in-depth/)). Our lessons will cover some additional summary statistical functions in
+a subsequent lesson, but overall we will focus on data cleaning and
+visualization.
+
+You can use functions like `mean()`, `min()`, `max()` on an
+individual column. Let's look at the "DP" or filtered depth. This value shows the number of filtered
+reads that support each of the reported variants.
+
+```{r, purl = FALSE}
+max(variants$DP)
+</code></pre></div>
+<p>You can sort a data frame using the <code>order()</code> function:</p>
+<p><code>{r, purl = FALSE} sorted_by_DP &lt;- variants[order(variants$DP), ] head(sorted_by_DP$DP)</code></p>
+<blockquote>
+<h2 id="exercise">Exercise<a class="headerlink" href="#exercise" title="Permanent link">¶</a></h2>
+<p>The <code>order()</code> function lists values in increasing order by default.
+Look at the documentation for this function and change <code>sorted_by_DP</code>
+to start with variants with the greatest filtered depth ("DP").</p>
+<blockquote>
+<h2 id="solution_2">Solution<a class="headerlink" href="#solution_2" title="Permanent link">¶</a></h2>
+<p><code>{r, purl = FALSE}    sorted_by_DP &lt;- variants[order(variants$DP, decreasing = TRUE), ]    head(sorted_by_DP$DP)</code>
+{: .solution} {: .challenge}</p>
+</blockquote>
+</blockquote>
+<p>You can rename columns:</p>
+<p>```{r, purl = FALSE} colnames(variants)[colnames(variants) ==
+"sample_id"] \&lt;- "strain"</p>
+<h1 id="check-the-column-name-hint-names-are-returned-as-a-vector">check the column name (hint names are returned as a vector)<a class="headerlink" href="#check-the-column-name-hint-names-are-returned-as-a-vector" title="Permanent link">¶</a></h1>
+<p>colnames(variants)</p>
+<div class="highlight"><pre><span></span><code>## Saving your data frame to a file
+
+We can save data to a file. We will save our `SRR2584863_variants` object
+to a .csv file using the `write.csv()` function:
+
+```{r, purl = FALSE}
+write.csv(SRR2584863_variants, file = "../data/SRR2584863_variants.csv")
+</code></pre></div>
+<p>The <code>write.csv()</code> function has some additional arguments listed in the
+help, but at a minimum you need to tell it what data frame to write to
+file, and give a path to a file name in quotes (if you only provide a
+file name, the file will be written in the current working directory).</p>
+<h2 id="importing-data-from-excel">Importing data from Excel<a class="headerlink" href="#importing-data-from-excel" title="Permanent link">¶</a></h2>
+<p>Excel is one of the most common formats, so we need to discuss how to
+make these files play nicely with R. The simplest way to import data
+from Excel is to <strong>save your Excel file in .csv format</strong>*. You can then
+import into R right away. Sometimes you may not be able to do this
+(imagine you have data in 300 Excel files, are you going to open and
+export all of them?).</p>
+<p>One common R package (a set of code with features you can download and
+add to your R installation) is the <a href="https://CRAN.R-project.org/package=readxl">readxl
+package</a> which can open and
+import Excel files. Rather than addressing package installation this
+second (we'll discuss this soon!), we can take advantage of RStudio's
+import feature which integrates this package. (Note: this feature is
+available only in the latest versions of RStudio such as is installed on
+our cloud instance).</p>
+<p>First, in the RStudio menu go to <strong>File</strong>, select <strong>Import Dataset</strong>,
+and choose <strong>From Excel...</strong> (notice there are several other options you
+can explore).</p>
+<p><code>&lt;img src="../fig/rstudio_import_menu.png " alt="rstudio import menu" style="width: 600px;"/&gt;</code></p>
+<p>Next, under <strong>File/Url:</strong> click the <code>&lt;KBD&gt;</code>Browse<code>&lt;/KBD&gt;</code>
+button and navigate to the <strong>Ecoli_metadata.xlsx</strong> file located at
+<code>/home/dcuser/dc_sample_data/R</code>. You should now see a preview of the
+data to be imported:</p>
+<p><code>&lt;img src="../fig/rstudio_import_screen.png " alt="rstudio import screen" style="width: 1200px;"/&gt;</code></p>
+<p>Notice that you have the option to change the data type of each variable
+by clicking arrow (drop-down menu) next to each column title. Under
+<strong>Import Options</strong> you may also rename the data, choose a different
+sheet to import, and choose how you will handle headers and skipped
+rows. Under <strong>Code Preview</strong> you can see the code that will be used to
+import this file. We could have written this code and imported the Excel
+file without the RStudio import function, but now you can choose your
+preference.</p>
+<p>In this exercise, we will leave the title of the data frame as
+<strong>Ecoli_metadata</strong>, and there are no other options we need to adjust.
+Click the <code>&lt;KBD&gt;</code>Import<code>&lt;/KBD&gt;</code> button to import the data.</p>
+<p>Finally, let's check the first few lines of the <code>Ecoli_metadata</code> data
+frame:</p>
+<p><code>{r, echo = FALSE, eval = TRUE, purl = FALSE, warning = FALSE} ## silently read in CSV file from CyVerse download.file("https://de.cyverse.org/dl/d/17FAE062-2673-417B-8544-77CC46974A37/Ecoli_metadata.xlsx",               destfile = "Ecoli_metadata.xlsx") Ecoli_metadata &lt;- readxl::read_xlsx("Ecoli_metadata.xlsx")</code></p>
+<p><code>{r, purl = FALSE} head(Ecoli_metadata)</code></p>
+<p>The type of this object is 'tibble', a type of data frame we will talk
+more about in the 'dplyr' section. If you needed a true R data frame you
+could coerce with <code>as.data.frame()</code>.</p>
+<blockquote>
+<h2 id="exercise-putting-it-all-together-data-frames">Exercise: Putting it all together - data frames<a class="headerlink" href="#exercise-putting-it-all-together-data-frames" title="Permanent link">¶</a></h2>
+<p><strong>Using the <code>Ecoli_metadata</code> data frame created above, answer the
+following questions</strong></p>
+<p>A)  What are the dimensions (# rows, # columns) of the data frame?</p>
+<p>B)  What are categories are there in the <code>cit</code> column? <em>hint</em>: treat
+    column as factor</p>
+<p>C)  How many of each of the <code>cit</code> categories are there?</p>
+<p>D)  What is the genome size for the 7<sup>th</sup> observation in this data set?</p>
+<p>E)  What is the median value of the variable <code>genome_size</code></p>
+<p>F)  Rename the column <code>sample</code> to <code>sample_id</code></p>
+<p>G)  Create a new column (name genome_size_bp) and set it equal to the
+    genome_size multiplied by 1,000,000</p>
+<p>H)  Save the edited Ecoli_metadata data frame as
+    "exercise_solution.csv" in your current working directory.</p>
+<blockquote>
+<h2 id="solution_3">Solution<a class="headerlink" href="#solution_3" title="Permanent link">¶</a></h2>
+<p><code>{r, purl = FALSE} dim(Ecoli_metadata) levels(as.factor(Ecoli_metadata$cit)) table(as.factor(Ecoli_metadata$cit)) Ecoli_metadata[7,7] median(Ecoli_metadata$genome_size) colnames(Ecoli_metadata)[colnames(Ecoli_metadata) == "sample"] &lt;- "sample_id" Ecoli_metadata$genome_size_bp &lt;- Ecoli_metadata$genome_size * 1000000 write.csv(Ecoli_metadata, file = "exercise_solution.csv")</code>
+{: .solution} {: .challenge}</p>
+</blockquote>
+</blockquote>
+</article>
+</div>
+</div>
+<a class="md-top md-icon" data-md-component="top" hidden="" href="#">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"></path></svg>
+            Back to top
+          </a>
+</main>
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "..", "features": ["navigation.tracking", "navigation.sections", "navigation.expand", "navigation.top"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+<script src="../assets/javascripts/bundle.2a6f1dda.min.js"></script>
+<script src="../javascripts/mathjax.js"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>document$.subscribe(() => {const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});})</script></body>
+</html>

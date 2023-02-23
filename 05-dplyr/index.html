@@ -1,0 +1,872 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="Genomics Aotearoa" name="author"/>
+<link href="https://genomicsaotearoa.github.io/Introduction-to-R/05-dplyr/" rel="canonical"/>
+<link href="../04-bioconductor-vcfr/" rel="prev"/>
+<link href="../06-data-visualization/" rel="next"/>
+<link href="../theme_figures/nesi_ga.png" rel="icon"/>
+<meta content="mkdocs-1.4.2, mkdocs-material-9.0.13" name="generator"/>
+<title>Data Wrangling and Analyses with Tidyverse - Introduction to R</title>
+<link href="../assets/stylesheets/main.ffa9267a.min.css" rel="stylesheet"/>
+<link href="../assets/stylesheets/palette.a0c5b2b5.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Mukta:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Mukta";--md-code-font:"Roboto Mono"}</style>
+<link href="../stylesheets/extra.css" rel="stylesheet"/>
+<script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+<link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            
+                .gscrollbar-fixer { padding-right: 15px; }
+                .gdesc-inner { font-size: 0.75rem; }
+                body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+                body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+                body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}
+                </style><script src="../assets/javascripts/glightbox.min.js"></script></head>
+<body data-md-color-accent="" data-md-color-primary="indigo" data-md-color-scheme="default" dir="ltr">
+<script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#data-wrangling-and-analyses-with-tidyverse">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Introduction to R" class="md-header__button md-logo" data-md-component="logo" href=".." title="Introduction to R">
+<img alt="logo" src="../theme_figures/nesi_ga.png"/>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Introduction to R
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              Data Wrangling and Analyses with Tidyverse
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="" data-md-color-media="(prefers-color-scheme)" data-md-color-primary="indigo" data-md-color-scheme="default" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_3" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9h-1.9M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69m-9.15 3.96h2.3L12 9l-1.15 3.65Z"></path></svg>
+</label>
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="" data-md-color-media="(prefers-color-scheme: light)" data-md-color-primary="indigo" data-md-color-scheme="default" id="__palette_2" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"></path></svg>
+</label>
+<input aria-label="Switch to system preference" class="md-option" data-md-color-accent="" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-primary="indigo" data-md-color-scheme="slate" id="__palette_3" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_2" hidden="" title="Switch to system preference">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"></path></svg>
+</label>
+</form>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"></path></svg>
+</button>
+</nav>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list" role="presentation"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/GenomicsAotearoa/Introduction-to-R" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    GenomicsAotearoa/Introduction-to-R
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Introduction to R" class="md-nav__button md-logo" data-md-component="logo" href=".." title="Introduction to R">
+<img alt="logo" src="../theme_figures/nesi_ga.png"/>
+</a>
+    Introduction to R
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/GenomicsAotearoa/Introduction-to-R" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    GenomicsAotearoa/Introduction-to-R
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="..">
+        Home
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../00-introduction/">
+        Introducing R and RStudio IDE
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../01-r-basics/">
+        R Basics
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../02-data-prelude/">
+        Introduction to the example dataset and file type
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../03-basics-factors-dataframes/">
+        R Basics continued - factors and data frames
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../04-bioconductor-vcfr/">
+        Using packages from Bioconductor
+      </a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+          Data Wrangling and Analyses with Tidyverse
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+        Data Wrangling and Analyses with Tidyverse
+      </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tip-installing-packages">
+    Tip: Installing packages
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#what-is-dplyr">
+    What is dplyr?
+  </a>
+<nav aria-label="What is dplyr?" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#loading-csv-files-in-tidy-style">
+    Loading .csv files in tidy style
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#taking-a-quick-look-at-data-frames">
+    Taking a quick look at data frames
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#selecting-columns-and-filtering-rows">
+    Selecting columns and filtering rows
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#challenge">
+    Challenge
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#solution">
+    Solution
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#alternative-solution">
+    Alternative solution
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#challenge_1">
+    Challenge
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#solution_1">
+    Solution
+  </a>
+<nav aria-label="Solution" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pipes">
+    Pipes
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exercise-pipe-and-filter">
+    Exercise: Pipe and filter
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#solution_2">
+    Solution
+  </a>
+<nav aria-label="Solution" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#mutate">
+    Mutate
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exercise">
+    Exercise
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#solution_3">
+    Solution
+  </a>
+<nav aria-label="Solution" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#group_by-and-summarize-functions">
+    group_by() and summarize() functions
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#challenge_2">
+    Challenge
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#solution_4">
+    Solution
+  </a>
+<nav aria-label="Solution" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#reshaping-data-frames">
+    Reshaping data frames
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#resources">
+    Resources
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../06-data-visualization/">
+        Data Visualization with ggplot2
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../07-knitr-markdown/">
+        Producing Reports With knitr
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../08-r-help/">
+        Getting help with R
+      </a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tip-installing-packages">
+    Tip: Installing packages
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#what-is-dplyr">
+    What is dplyr?
+  </a>
+<nav aria-label="What is dplyr?" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#loading-csv-files-in-tidy-style">
+    Loading .csv files in tidy style
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#taking-a-quick-look-at-data-frames">
+    Taking a quick look at data frames
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#selecting-columns-and-filtering-rows">
+    Selecting columns and filtering rows
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#challenge">
+    Challenge
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#solution">
+    Solution
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#alternative-solution">
+    Alternative solution
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#challenge_1">
+    Challenge
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#solution_1">
+    Solution
+  </a>
+<nav aria-label="Solution" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pipes">
+    Pipes
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exercise-pipe-and-filter">
+    Exercise: Pipe and filter
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#solution_2">
+    Solution
+  </a>
+<nav aria-label="Solution" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#mutate">
+    Mutate
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exercise">
+    Exercise
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#solution_3">
+    Solution
+  </a>
+<nav aria-label="Solution" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#group_by-and-summarize-functions">
+    group_by() and summarize() functions
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#challenge_2">
+    Challenge
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#solution_4">
+    Solution
+  </a>
+<nav aria-label="Solution" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#reshaping-data-frames">
+    Reshaping data frames
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#resources">
+    Resources
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<h1 id="data-wrangling-and-analyses-with-tidyverse">Data Wrangling and Analyses with Tidyverse<a class="headerlink" href="#data-wrangling-and-analyses-with-tidyverse" title="Permanent link">¶</a></h1>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>keypoints:</p>
+<ul>
+<li>Use the <code>dplyr</code> package to manipulate data frames.</li>
+<li>Use <code>glimpse()</code> to quickly look at your data frame.</li>
+<li>Use <code>select()</code> to choose variables from a data frame.</li>
+<li>Use <code>filter()</code> to choose data based on values.</li>
+<li>Use <code>mutate()</code> to create new variables.</li>
+<li>Use <code>group_by()</code> and <code>summarize()</code> to work with subsets of data.</li>
+</ul>
+<p>objectives:
+- Describe what the <code>dplyr</code> package in R is used for.
+- Apply common <code>dplyr</code> functions to manipulate data in R.
+- Employ the 'pipe' operator to link together a sequence of functions.
+- Employ the 'mutate' function to apply other chosen functions to
+  existing columns and create new columns of data.
+- Employ the 'split-apply-combine' concept to split the data into
+  groups, apply analysis to each group, and combine the results.</p>
+<p>questions: How can I manipulate data frames without repeating myself?</p>
+</div>
+<p>Bracket subsetting is handy, but it can be cumbersome and difficult to
+read, especially for complicated operations.</p>
+<p>Luckily, the <a href="https://cran.r-project.org/package=dplyr"><code>dplyr</code></a> package
+provides a number of very useful functions for manipulating data frames
+in a way that will reduce repetition, reduce the probability of making
+errors, and probably even save you some typing. As an added bonus, you
+might even find the <code>dplyr</code> grammar easier to read.</p>
+<p>Here we're going to cover some of the most commonly used functions as
+well as using pipes (<code>%&gt;%</code>) to combine them:</p>
+<ol>
+<li><code>glimpse()</code></li>
+<li><code>select()</code></li>
+<li><code>filter()</code></li>
+<li><code>group_by()</code></li>
+<li><code>summarize()</code></li>
+<li><code>mutate()</code></li>
+<li><code>pivot_longer</code> and <code>pivot_wider</code></li>
+</ol>
+<p>Packages in R are sets of additional functions that let you do more
+stuff in R. The functions we've been using, like <code>str()</code>, come built
+into R; packages give you access to more functions. You need to install
+a package and then load it to be able to use it.</p>
+<p><code>{r, eval = FALSE, purl = FALSE} install.packages("dplyr") ## installs dplyr package install.packages("tidyr") ## installs tidyr package install.packages("ggplot2") ## installs ggplot2 package install.packages("readr") ## install readr package</code></p>
+<p>You might get asked to choose a CRAN mirror -- this is asking you to
+choose a site to download the package from. The choice doesn't matter
+too much; I'd recommend choosing the RStudio mirror.</p>
+<p><code>{r, message = FALSE, purl = FALSE} library("dplyr")          ## loads in dplyr package to use library("tidyr")          ## loads in tidyr package to use library("ggplot2")          ## loads in ggplot2 package to use library("readr")          ## load in readr package to use</code></p>
+<p>You only need to install a package once per computer, but you need to
+load it every time you open a new R session and want to use that
+package.</p>
+<blockquote>
+<h2 id="tip-installing-packages">Tip: Installing packages<a class="headerlink" href="#tip-installing-packages" title="Permanent link">¶</a></h2>
+<p>It may be temping to install the <code>tidyverse</code> package, as it contains
+many useful collection of packages for this lesson and beyond.
+However, when teaching or following this lesson, we advise that
+participants install <code>dplyr</code>, <code>readr</code>, <code>ggplot2</code>, and <code>tidyr</code>
+individually as shown above. Otherwise, a substaial amount of the
+lesson will be spend waiting for the installation to complete. {:
+.callout}</p>
+</blockquote>
+<h2 id="what-is-dplyr">What is dplyr?<a class="headerlink" href="#what-is-dplyr" title="Permanent link">¶</a></h2>
+<p>The package <code>dplyr</code> is a fairly new (2014) package that tries to provide
+easy tools for the most common data manipulation tasks. This package is
+also included in the <a href="https://www.tidyverse.org/"><code>tidyverse</code> package</a>,
+which is a collection of eight different packages (<code>dplyr</code>, <code>ggplot2</code>,
+<code>tibble</code>, <code>tidyr</code>, <code>readr</code>, <code>purrr</code>, <code>stringr</code>, and <code>forcats</code>). It is
+built to work directly with data frames. The thinking behind it was
+largely inspired by the package <code>plyr</code> which has been in use for some
+time but suffered from being slow in some cases.<code>dplyr</code> addresses this
+by porting much of the computation to C++. An additional feature is the
+ability to work with data stored directly in an external database. The
+benefits of doing this are that the data can be managed natively in a
+relational database, queries can be conducted on that database, and only
+the results of the query returned.</p>
+<p>This addresses a common problem with R in that all operations are
+conducted in memory and thus the amount of data you can work with is
+limited by available memory. The database connections essentially remove
+that limitation in that you can have a database that is over 100s of GB,
+conduct queries on it directly and pull back just what you need for
+analysis in R.</p>
+<h3 id="loading-csv-files-in-tidy-style">Loading .csv files in tidy style<a class="headerlink" href="#loading-csv-files-in-tidy-style" title="Permanent link">¶</a></h3>
+<p>The Tidyverse's <code>readr</code> package provides its own unique way of loading
+.csv files in to R using <code>read_csv()</code>, which is similar to <code>read.csv()</code>.
+<code>read_csv()</code> allows users to load in their data faster, doesn't create
+row names, and allows you to access non-standard variable names (ie.
+variables that start with numbers of contain spaces), and outputs your
+data on the R console in a tidier way. In short, it's a much friendlier
+way of loading in potentially messy data.</p>
+<p>Now let's load our vcf .csv file using <code>read_csv()</code>:</p>
+<p><code>{r, include = FALSE, echo = FALSE, eval = TRUE, purl = FALSE} variants &lt;- read_csv("../data/combined_tidy_vcf.csv")</code></p>
+<h3 id="taking-a-quick-look-at-data-frames">Taking a quick look at data frames<a class="headerlink" href="#taking-a-quick-look-at-data-frames" title="Permanent link">¶</a></h3>
+<p>Similar to <code>str()</code>, which comes built into R, <code>glimpse()</code> is a <code>dplyr</code>
+function that (as the name suggests) gives a glimpse of the data frame.</p>
+<p><code>{r, echo = FALSE, eval = TRUE, purl = FALSE} glimpse(variants)</code></p>
+<p>In the above output, we can already gather some information about
+<code>variants</code>, such as the number of rows and columns, column names, type
+of vector in the columns, and the first few entries of each column.
+Although what we see is similar to outputs of <code>str()</code>, this method gives
+a cleaner visual output.</p>
+<h3 id="selecting-columns-and-filtering-rows">Selecting columns and filtering rows<a class="headerlink" href="#selecting-columns-and-filtering-rows" title="Permanent link">¶</a></h3>
+<p>To select columns of a data frame, use <code>select()</code>. The first argument to
+this function is the data frame (<code>variants</code>), and the subsequent
+arguments are the columns to keep.</p>
+<p><code>{r, echo = TRUE, eval = TRUE, purl = FALSE} select(variants, sample_id, REF, ALT, DP)</code></p>
+<p>To select all columns <em>except</em> certain ones, put a "-" in front of the
+variable to exclude it.</p>
+<p><code>{r, echo = TRUE, eval = TRUE, purl = FALSE} select(variants, -CHROM)</code></p>
+<p><code>dplyr</code> also provides useful functions to select columns based on their
+names. For instance, <code>ends_with()</code> allows you to select columns that
+ends with specific letters. For instance, if you wanted to select
+columns that end with the letter "B":</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a>select(variants, ends_with("B"))
+</code></pre></div>
+<blockquote>
+<h2 id="challenge">Challenge<a class="headerlink" href="#challenge" title="Permanent link">¶</a></h2>
+<p>Create a table that contains all the columns with the letter "i" and
+column "POS", without columns "Indiv" and "FILTER". Hint: look at for
+a function called <code>contains()</code>, which can be found in the help
+documentation for ends with we just covered (<code>?ends_with</code>). Note that
+contains() is not case sensistive.</p>
+<blockquote>
+<h2 id="solution">Solution<a class="headerlink" href="#solution" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a># First, we select "POS" and all columns with letter "i". This will contain columns Indiv and FILTER. 
+<a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a>variants_subset &lt;- select(variants, POS, contains("i"))
+<a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a># Next, we remove columns Indiv and FILTER
+<a href="#__codelineno-1-4" id="__codelineno-1-4" name="__codelineno-1-4"></a>variants_result &lt;- select(variants_subset, -Indiv, -FILTER)
+<a href="#__codelineno-1-5" id="__codelineno-1-5" name="__codelineno-1-5"></a>variants_result
+</code></pre></div>
+</blockquote>
+<p>We can also get to <code>variants_result</code> in one line of code:</p>
+<blockquote>
+<h2 id="alternative-solution">Alternative solution<a class="headerlink" href="#alternative-solution" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a>variants_result &lt;- select(variants, POS, contains("i"), -Indiv, -FILTER)
+<a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a>variants_result
+</code></pre></div>
+<p>{: .solution} {: .challenge}</p>
+</blockquote>
+</blockquote>
+<p>To choose rows, use <code>filter()</code>:</p>
+<p><code>{r, echo = TRUE, eval = TRUE, purl = FALSE} filter(variants, sample_id == "SRR2584863")</code></p>
+<p><code>filter()</code> will keep all the rows that match the conditions that are
+provided. Here are a few examples:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a># rows for which the reference genome has T or G
+<a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a>filter(variants, REF %in% c("T", "G"))
+<a href="#__codelineno-3-3" id="__codelineno-3-3" name="__codelineno-3-3"></a># rows that have TRUE in the column INDEL
+<a href="#__codelineno-3-4" id="__codelineno-3-4" name="__codelineno-3-4"></a>filter(variants, INDEL)
+<a href="#__codelineno-3-5" id="__codelineno-3-5" name="__codelineno-3-5"></a># rows that don't have missing data in the IDV column
+<a href="#__codelineno-3-6" id="__codelineno-3-6" name="__codelineno-3-6"></a>filter(variants, !is.na(IDV))
+</code></pre></div>
+<p>We have a column titled "QUAL". This is a Phred-scaled confidence score
+that a polymorphism exists at this position given the sequencing data.
+Lower QUAL scores indicate low probability of a polymorphism existing at
+that site. <code>filter()</code> can be useful for selecting mutations that have a
+QUAL score above a certain threshold:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-4-1" id="__codelineno-4-1" name="__codelineno-4-1"></a># rows with QUAL values greater than or equal to 100
+<a href="#__codelineno-4-2" id="__codelineno-4-2" name="__codelineno-4-2"></a>filter(variants, QUAL &gt;= 100)
+</code></pre></div>
+<p><code>filter()</code> allows you to combine multiple conditions. You can separate
+them using a <code>,</code> as arguments to the function, they will be combined
+using the <code>&amp;</code> (AND) logical operator. If you need to use the <code>|</code> (OR)
+logical operator, you can specify it explicitly:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-5-1" id="__codelineno-5-1" name="__codelineno-5-1"></a># this is equivalent to:
+<a href="#__codelineno-5-2" id="__codelineno-5-2" name="__codelineno-5-2"></a>#   filter(variants, sample_id == "SRR2584863" &amp; QUAL &gt;= 100)
+<a href="#__codelineno-5-3" id="__codelineno-5-3" name="__codelineno-5-3"></a>filter(variants, sample_id == "SRR2584863", QUAL &gt;= 100)
+<a href="#__codelineno-5-4" id="__codelineno-5-4" name="__codelineno-5-4"></a># using `|` logical operator
+<a href="#__codelineno-5-5" id="__codelineno-5-5" name="__codelineno-5-5"></a>filter(variants, sample_id == "SRR2584863", (MQ &gt;= 50 | QUAL &gt;= 100))
+</code></pre></div>
+<blockquote>
+<h2 id="challenge_1">Challenge<a class="headerlink" href="#challenge_1" title="Permanent link">¶</a></h2>
+<p>Select all the mutations that occurred between the positions 1e6 (one
+million) and 2e6 (inclusive) that have a QUAL greater than 200, and
+exclude INDEL mutations. Hint: to flip logical values such as TRUE to
+a FALSE, we can use to negation symbol "!". (eg. !TRUE == FALSE).</p>
+<blockquote>
+<h2 id="solution_1">Solution<a class="headerlink" href="#solution_1" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-6-1" id="__codelineno-6-1" name="__codelineno-6-1"></a>filter(variants, POS &gt;= 1e6 &amp; POS &lt;= 2e6, QUAL &gt; 200, !INDEL)
+</code></pre></div>
+<p>{: .solution} {: .challenge}</p>
+</blockquote>
+</blockquote>
+<h3 id="pipes">Pipes<a class="headerlink" href="#pipes" title="Permanent link">¶</a></h3>
+<p>But what if you wanted to select and filter? We can do this with pipes.
+Pipes, are a fairly recent addition to R. Pipes let you take the output
+of one function and send it directly to the next, which is useful when
+you need to many things to the same data set. It was possible to do this
+before pipes were added to R, but it was much messier and more
+difficult. Pipes in R look like <code>%&gt;%</code> and are made available via the
+<code>magrittr</code> package, which is installed as part of <code>dplyr</code>. If you use
+RStudio, you can type the pipe with <code>&lt;kbd&gt;</code>Ctrl<code>&lt;/kbd&gt;</code> +
+<code>&lt;kbd&gt;</code>Shift<code>&lt;/kbd&gt;</code> + <code>&lt;kbd&gt;</code>M<code>&lt;/kbd&gt;</code> if
+you're using a PC, or <code>&lt;kbd&gt;</code>Cmd<code>&lt;/kbd&gt;</code> +
+<code>&lt;kbd&gt;</code>Shift<code>&lt;/kbd&gt;</code> + <code>&lt;kbd&gt;</code>M<code>&lt;/kbd&gt;</code> if
+you're using a Mac.</p>
+<p><code>{r, echo = TRUE, eval = TRUE, purl = FALSE} variants %&gt;%   filter(sample_id == "SRR2584863") %&gt;%   select(REF, ALT, DP)</code></p>
+<p>In the above code, we use the pipe to send the <code>variants</code> data set first
+through <code>filter()</code>, to keep rows where <code>sample_id</code> matches a particular
+sample, and then through <code>select()</code> to keep only the <code>REF</code>, <code>ALT</code>, and
+<code>DP</code> columns. Since <code>%&gt;%</code> takes the object on its left and passes it as
+the first argument to the function on its right, we don't need to
+explicitly include the data frame as an argument to the <code>filter()</code> and
+<code>select()</code> functions any more.</p>
+<p>Some may find it helpful to read the pipe like the word "then". For
+instance, in the above example, we took the data frame <code>variants</code>,
+<em>then</em> we <code>filter</code>ed for rows where <code>sample_id</code> was SRR2584863, <em>then</em>
+we <code>select</code>ed the <code>REF</code>, <code>ALT</code>, and <code>DP</code> columns, <em>then</em> we showed only
+the first six rows. The <strong><code>dplyr</code></strong> functions by themselves are somewhat
+simple, but by combining them into linear workflows with the pipe, we
+can accomplish more complex manipulations of data frames.</p>
+<p>If we want to create a new object with this smaller version of the data
+we can do so by assigning it a new name:</p>
+<p><code>{r, purl = FALSE} SRR2584863_variants &lt;- variants %&gt;%   filter(sample_id == "SRR2584863") %&gt;%   select(REF, ALT, DP)</code></p>
+<p>This new object includes all of the data from this sample. Let's look at
+just the first six rows to confirm it's what we want:</p>
+<p><code>{r, purl = FALSE} SRR2584863_variants</code></p>
+<p>Similar to <code>head()</code> and <code>tail()</code> functions, we can also look at the
+first or last six rows using tidyverse function <code>slice()</code>. Slice is a
+more versatile function that allows users to specify a range to view:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-7-1" id="__codelineno-7-1" name="__codelineno-7-1"></a>SRR2584863_variants %&gt;% slice(1:6)
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-8-1" id="__codelineno-8-1" name="__codelineno-8-1"></a>SRR2584863_variants %&gt;% slice(10:25)
+</code></pre></div>
+<blockquote>
+<h2 id="exercise-pipe-and-filter">Exercise: Pipe and filter<a class="headerlink" href="#exercise-pipe-and-filter" title="Permanent link">¶</a></h2>
+<p>Starting with the <code>variants</code> data frame, use pipes to subset the data
+to include only observations from SRR2584863 sample, where the
+filtered depth (DP) is at least 10. Showing only 5<sup>th</sup> through 11<sup>th</sup> rows
+of columns <code>REF</code>, <code>ALT</code>, and <code>POS</code>.</p>
+<blockquote>
+<h2 id="solution_2">Solution<a class="headerlink" href="#solution_2" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-9-1" id="__codelineno-9-1" name="__codelineno-9-1"></a> variants %&gt;%
+<a href="#__codelineno-9-2" id="__codelineno-9-2" name="__codelineno-9-2"></a> filter(sample_id == "SRR2584863" &amp; DP &gt;= 10) %&gt;%
+<a href="#__codelineno-9-3" id="__codelineno-9-3" name="__codelineno-9-3"></a> slice(5:11) %&gt;%
+<a href="#__codelineno-9-4" id="__codelineno-9-4" name="__codelineno-9-4"></a> select(sample_id, DP, REF, ALT, POS)
+</code></pre></div>
+<p>{: .solution} {: .challenge}</p>
+</blockquote>
+</blockquote>
+<h3 id="mutate">Mutate<a class="headerlink" href="#mutate" title="Permanent link">¶</a></h3>
+<p>Frequently you'll want to create new columns based on the values in
+existing columns, for example to do unit conversions or find the ratio
+of values in two columns. For this we'll use the <code>dplyr</code> function
+<code>mutate()</code>.</p>
+<p>For example, we can convert the polymorphism confidence value QUAL to a
+probability value according to the formula:</p>
+<p>Probability = 1- 10 ^ -(QUAL/10)</p>
+<p>We can use <code>mutate</code> to add a column (<code>POLPROB</code>) to our <code>variants</code> data
+frame that shows the probability of a polymorphism at that site given
+the data.</p>
+<p><code>{r, purl = FALSE} variants %&gt;%   mutate(POLPROB = 1 - (10 ^ -(QUAL/10)))</code></p>
+<blockquote>
+<h2 id="exercise">Exercise<a class="headerlink" href="#exercise" title="Permanent link">¶</a></h2>
+<p>There are a lot of columns in our data set, so let's just look at the
+<code>sample_id</code>, <code>POS</code>, <code>QUAL</code>, and <code>POLPROB</code> columns for now. Add a line
+to the above code to only show those columns.</p>
+<blockquote>
+<h2 id="solution_3">Solution<a class="headerlink" href="#solution_3" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-10-1" id="__codelineno-10-1" name="__codelineno-10-1"></a>variants %&gt;%
+<a href="#__codelineno-10-2" id="__codelineno-10-2" name="__codelineno-10-2"></a> mutate(POLPROB = 1 - 10 ^ -(QUAL/10)) %&gt;%
+<a href="#__codelineno-10-3" id="__codelineno-10-3" name="__codelineno-10-3"></a> select(sample_id, POS, QUAL, POLPROB)
+</code></pre></div>
+<p>{: .solution} {: .challenge}</p>
+</blockquote>
+</blockquote>
+<h3 id="group_by-and-summarize-functions">group_by() and summarize() functions<a class="headerlink" href="#group_by-and-summarize-functions" title="Permanent link">¶</a></h3>
+<p>Many data analysis tasks can be approached using the
+"split-apply-combine" paradigm: split the data into groups, apply some
+analysis to each group, and then combine the results. <code>dplyr</code> makes this
+very easy through the use of the <code>group_by()</code> function, which splits the
+data into groups.</p>
+<p>We can use <code>group_by()</code> to tally the number of mutations detected in
+each sample using the function <code>tally()</code>:</p>
+<p><code>{r, purl = FALSE, message = FALSE} variants %&gt;%   group_by(sample_id) %&gt;%   tally()</code></p>
+<p>Since counting or tallying values is a common use case for <code>group_by()</code>,
+an alternative function was created to bypasses <code>group_by()</code> using the
+function <code>count()</code>:</p>
+<p><code>{r, purl = FALSE, message = FALSE} variants %&gt;%   count(sample_id)</code></p>
+<blockquote>
+<h2 id="challenge_2">Challenge<a class="headerlink" href="#challenge_2" title="Permanent link">¶</a></h2>
+<ul>
+<li>How many mutations are INDELs?</li>
+</ul>
+<blockquote>
+<h2 id="solution_4">Solution<a class="headerlink" href="#solution_4" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-11-1" id="__codelineno-11-1" name="__codelineno-11-1"></a>variants %&gt;%
+<a href="#__codelineno-11-2" id="__codelineno-11-2" name="__codelineno-11-2"></a>  count(INDEL)
+</code></pre></div>
+<p>{: .solution} {: .challenge}</p>
+</blockquote>
+</blockquote>
+<p>When the data is grouped, <code>summarize()</code> can be used to collapse each
+group into a single-row summary. <code>summarize()</code> does this by applying an
+aggregating or summary function to each group.</p>
+<p>It can be a bit tricky at first, but we can imagine physically splitting
+the data frame by groups and applying a certain function to summarize
+the data.</p>
+<p><div class="highlight"><pre><span></span><code><a href="#__codelineno-12-1" id="__codelineno-12-1" name="__codelineno-12-1"></a>&lt;center&gt;
+</code></pre></div>
+<code>&lt;img src="../fig/split_apply_combine.png" alt="rstudio default session" style="width: 500px;"/&gt;</code>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-13-1" id="__codelineno-13-1" name="__codelineno-13-1"></a>&lt;/center&gt;
+</code></pre></div>
+<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p>We can also apply many other functions to individual columns to get
+other summary statistics. For example,we can use built-in functions like
+<code>mean()</code>, <code>median()</code>, <code>min()</code>, and <code>max()</code>. These are called "built-in
+functions" because they come with R and don't require that you install
+any additional packages. By default, all <strong>R functions operating on
+vectors that contains missing data will return NA</strong>. It's a way to make
+sure that users know they have missing data, and make a conscious
+decision on how to deal with it. When dealing with simple statistics
+like the mean, the easiest way to ignore <code>NA</code> (the missing data) is to
+use <code>na.rm = TRUE</code> (<code>rm</code> stands for remove).</p>
+<p>So to view the mean, median, maximum, and minimum filtered depth (<code>DP</code>)
+for each sample:</p>
+<p><code>{r, purl = FALSE, message = FALSE} variants %&gt;%   group_by(sample_id) %&gt;%   summarize(     mean_DP = mean(DP),     median_DP = median(DP),     min_DP = min(DP),     max_DP = max(DP))</code></p>
+<h3 id="reshaping-data-frames">Reshaping data frames<a class="headerlink" href="#reshaping-data-frames" title="Permanent link">¶</a></h3>
+<p>It can sometimes be useful to transform the "long" tidy format, into the
+wide format. This transformation can be done with the <code>pivot_wider()</code>
+function provided by the <code>tidyr</code> package (also part of the <code>tidyverse</code>).</p>
+<p><code>pivot_wider()</code> takes a data frame as the first argument, and two
+arguments: the column name that will become the columns and the column
+name that will become the cells in the wide data.</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-14-1" id="__codelineno-14-1" name="__codelineno-14-1"></a>variants_wide &lt;- variants %&gt;%
+<a href="#__codelineno-14-2" id="__codelineno-14-2" name="__codelineno-14-2"></a>  group_by(sample_id, CHROM) %&gt;%
+<a href="#__codelineno-14-3" id="__codelineno-14-3" name="__codelineno-14-3"></a>  summarize(mean_DP = mean(DP)) %&gt;%
+<a href="#__codelineno-14-4" id="__codelineno-14-4" name="__codelineno-14-4"></a>  pivot_wider(names_from = sample_id, values_from = mean_DP)
+<a href="#__codelineno-14-5" id="__codelineno-14-5" name="__codelineno-14-5"></a>variants_wide
+</code></pre></div>
+<p>The opposite operation of <code>pivot_wider()</code> is taken care by
+<code>pivot_longer()</code>. We specify the names of the new columns, and here add
+<code>-CHROM</code> as this column shouldn't be affected by the reshaping:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-15-1" id="__codelineno-15-1" name="__codelineno-15-1"></a>variants_wide %&gt;%
+<a href="#__codelineno-15-2" id="__codelineno-15-2" name="__codelineno-15-2"></a>  pivot_longer(-CHROM, names_to = "sample_id", values_to = "mean_DP")
+</code></pre></div>
+<h3 id="resources">Resources<a class="headerlink" href="#resources" title="Permanent link">¶</a></h3>
+<ul>
+<li>
+<p><a href="https://github.com/rstudio/cheatsheets/raw/master/data-transformation.pdf">Handy dplyr
+    cheatsheet</a></p>
+</li>
+<li>
+<p><a href="http://usepa.github.io/introR/2015/01/14/03-Clean/">Much of this lesson was copied or adapted from Jeff Hollister's
+    materials</a></p>
+</li>
+</ul>
+<div class="footnote">
+<hr/>
+<ol>
+<li id="fn:1">
+<p>The figure was adapted from the Software Carpentry lesson, <a href="https://swcarpentry.github.io/r-novice-gapminder/13-dplyr/">R for
+Reproducible Scientific
+Analysis</a> <a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">↩</a></p>
+</li>
+</ol>
+</div>
+</article>
+</div>
+</div>
+<a class="md-top md-icon" data-md-component="top" hidden="" href="#">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"></path></svg>
+            Back to top
+          </a>
+</main>
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "..", "features": ["navigation.tracking", "navigation.sections", "navigation.expand", "navigation.top"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+<script src="../assets/javascripts/bundle.2a6f1dda.min.js"></script>
+<script src="../javascripts/mathjax.js"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>document$.subscribe(() => {const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});})</script></body>
+</html>

@@ -1,0 +1,560 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="Genomics Aotearoa" name="author"/>
+<link href="https://genomicsaotearoa.github.io/Introduction-to-R/06-data-visualization/" rel="canonical"/>
+<link href="../05-dplyr/" rel="prev"/>
+<link href="../07-knitr-markdown/" rel="next"/>
+<link href="../theme_figures/nesi_ga.png" rel="icon"/>
+<meta content="mkdocs-1.4.2, mkdocs-material-9.0.13" name="generator"/>
+<title>Data Visualization with ggplot2 - Introduction to R</title>
+<link href="../assets/stylesheets/main.ffa9267a.min.css" rel="stylesheet"/>
+<link href="../assets/stylesheets/palette.a0c5b2b5.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Mukta:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Mukta";--md-code-font:"Roboto Mono"}</style>
+<link href="../stylesheets/extra.css" rel="stylesheet"/>
+<script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+<link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            
+                .gscrollbar-fixer { padding-right: 15px; }
+                .gdesc-inner { font-size: 0.75rem; }
+                body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+                body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+                body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}
+                </style><script src="../assets/javascripts/glightbox.min.js"></script></head>
+<body data-md-color-accent="" data-md-color-primary="indigo" data-md-color-scheme="default" dir="ltr">
+<script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#data-visualization-with-ggplot2">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Introduction to R" class="md-header__button md-logo" data-md-component="logo" href=".." title="Introduction to R">
+<img alt="logo" src="../theme_figures/nesi_ga.png"/>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Introduction to R
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              Data Visualization with ggplot2
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="" data-md-color-media="(prefers-color-scheme)" data-md-color-primary="indigo" data-md-color-scheme="default" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_3" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9h-1.9M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69m-9.15 3.96h2.3L12 9l-1.15 3.65Z"></path></svg>
+</label>
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="" data-md-color-media="(prefers-color-scheme: light)" data-md-color-primary="indigo" data-md-color-scheme="default" id="__palette_2" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"></path></svg>
+</label>
+<input aria-label="Switch to system preference" class="md-option" data-md-color-accent="" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-primary="indigo" data-md-color-scheme="slate" id="__palette_3" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_2" hidden="" title="Switch to system preference">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"></path></svg>
+</label>
+</form>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"></path></svg>
+</button>
+</nav>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list" role="presentation"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/GenomicsAotearoa/Introduction-to-R" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    GenomicsAotearoa/Introduction-to-R
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Introduction to R" class="md-nav__button md-logo" data-md-component="logo" href=".." title="Introduction to R">
+<img alt="logo" src="../theme_figures/nesi_ga.png"/>
+</a>
+    Introduction to R
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/GenomicsAotearoa/Introduction-to-R" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    GenomicsAotearoa/Introduction-to-R
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="..">
+        Home
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../00-introduction/">
+        Introducing R and RStudio IDE
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../01-r-basics/">
+        R Basics
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../02-data-prelude/">
+        Introduction to the example dataset and file type
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../03-basics-factors-dataframes/">
+        R Basics continued - factors and data frames
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../04-bioconductor-vcfr/">
+        Using packages from Bioconductor
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../05-dplyr/">
+        Data Wrangling and Analyses with Tidyverse
+      </a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<a class="md-nav__link md-nav__link--active" href="./">
+        Data Visualization with ggplot2
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../07-knitr-markdown/">
+        Producing Reports With knitr
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../08-r-help/">
+        Getting help with R
+      </a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<h1 id="data-visualization-with-ggplot2">Data Visualization with ggplot2<a class="headerlink" href="#data-visualization-with-ggplot2" title="Permanent link">¶</a></h1>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>keypoints:</p>
+<ul>
+<li>ggplot2 is a powerful tool for high-quality plots</li>
+<li>ggplot2 provides a flexiable and readable grammar to build plots</li>
+</ul>
+<p>objectives:</p>
+<ul>
+<li>Describe the role of data, aesthetics, and geoms in ggplot functions.</li>
+<li>Choose the correct aesthetics and alter the geom parameters for a
+  scatter plot, histogram, or box plot.</li>
+<li>Layer multiple geometries in a single plot.</li>
+<li>Customize plot scales, titles, themes, and fonts.</li>
+<li>Apply a facet to a plot.</li>
+<li>Apply additional ggplot2-compatible plotting libraries.</li>
+<li>Save a ggplot to a file.</li>
+<li>List several resources for getting help with ggplot.</li>
+<li>List several resources for creating informative scientific plots.</li>
+</ul>
+<p>questions:</p>
+<ul>
+<li>What is ggplot2?</li>
+<li>What is mapping, and what is aesthetics?</li>
+<li>What is the process of creating a publication-quality plots with
+  ggplot in R?</li>
+</ul>
+</div>
+<p>```{r, echo = FALSE, eval = TRUE, purl = FALSE} ## silently read in
+CSV file from FigShare</p>
+<h1 id="variants-readcsvhttpsndownloaderfigsharecomfiles14632895">variants \&lt;- read.csv("<a href="https://ndownloader.figshare.com/files/14632895">https://ndownloader.figshare.com/files/14632895</a>")<a class="headerlink" href="#variants-readcsvhttpsndownloaderfigsharecomfiles14632895" title="Permanent link">¶</a></h1>
+<p>variants =
+read.csv("<a href="https://raw.githubusercontent.com/naupaka/vcfr-for-data-carpentry-draft/main/output/combined_tidy_vcf.csv">https://raw.githubusercontent.com/naupaka/vcfr-for-data-carpentry-draft/main/output/combined_tidy_vcf.csv</a>")</p>
+<div class="highlight"><pre><span></span><code>## Introduction to **`ggplot2`**
+
+&lt;img src="https://ggplot2.tidyverse.org/logo.png" align="right" alt="Line plot enclosed in hexagon shape with ggplot2 typed beneath and www.rstudio.com at the bottom."&gt;
+
+**`ggplot2`** is a plotting package that makes it simple to create complex plots from data in a data frame. It provides a more programmatic interface for specifying what variables to plot, how they are displayed, and general visual properties. Therefore, we only need minimal changes if the underlying data change or if we decide to change from a bar plot to a scatter plot. This helps in creating publication-quality plots with minimal amounts of adjustments and tweaking.
+
+The **gg** in “**ggplot**” stands for “**G**rammar of **G**raphics,” which is an elegant yet powerful way to describe the making of scientific plots. In short, the grammar of graphics breaks down every plot into a few components, namely, a dataset, a set of geoms (visual marks that represent the data points), and a coordinate system. You can imagine this is a grammar that gives unique names to each component appearing in a plot and conveys specific information about data. With **ggplot**, graphics are built step by step by adding new elements.
+
+The idea of **mapping** is crucial in **ggplot**. One familiar example is to *map* the value of one variable in a dataset to $x$ and the other to $y$. However, we often encounter datasets that include multiple (more than two) variables. In this case, **ggplot** allows you to *map* those other variables to visual marks such as **color** and **shape** (**aesthetics** or `aes`). One thing you may want to remember is the difference between **discrete** and **continuous** variables. Some aesthetics, such as the shape of dots, do not accept continuous variables. If forced to do so, R will give an error. This is easy to understand; we cannot create a continuum of shapes for a variable, unlike, say, color.
+
+**Tip:** when having doubts about whether a variable is [continuous or discrete](https://en.wikipedia.org/wiki/Continuous_or_discrete_variable), a quick way to check is to use the [`summary()`](https://www.geeksforgeeks.org/get-summary-of-results-produced-by-functions-in-r-programming-summary-function/) function. Continuous variables have descriptive statistics but not the discrete variables.
+
+## Installing `tidyverse`
+
+**`ggplot2`** belongs to the [**`tidyverse`** framework](https://www.tidyverse.org/). Therefore, we will start with loading the package **`tidyverse`**. If **`tidyverse`** is not already installed, then we need to install first. If it is already installed, then we can skip the following step:
+
+```{r install-tidyverse, echo=TRUE, eval=FALSE}
+install.packages("tidyverse") # Installing tidyverse package, includes ggplot2 and other packages such as dplyr, readr, tidyr
+</code></pre></div>
+<p>Now, let's load the <code>tidyverse</code> package:</p>
+<p><code>{r load-tidyverse} library(tidyverse)</code></p>
+<p>As we can see from above output <strong><code>ggplot2</code></strong> has been already loaded
+along with other packages as part of the <strong><code>tidyverse</code></strong> framework.</p>
+<h2 id="loading-the-dataset">Loading the dataset<a class="headerlink" href="#loading-the-dataset" title="Permanent link">¶</a></h2>
+<p><code>{r load-the-dataset, echo=TRUE, eval=TRUE} variants = read_csv("https://raw.githubusercontent.com/naupaka/vcfr-for-data-carpentry-draft/main/output/combined_tidy_vcf.csv")</code></p>
+<p>Explore the <em>structure</em> (types of columns and number of rows) of the
+dataset using <a href="https://dplyr.tidyverse.org/index.html">dplyr</a>'s
+<a href="https://dplyr.tidyverse.org/reference/glimpse.html"><code>glimpse()</code></a> (for
+more info, see the <a href="https://datacarpentry.org/genomics-r-intro/05-dplyr/">Data Wrangling and Analyses with
+Tidyverse</a>
+episode)</p>
+<p><code>{r glimpse-at-the-data} glimpse(variants) # Show a snapshot of the rows and columns</code></p>
+<p>Alternatively, we can display the first a few rows (vertically) of the
+table using
+<a href="https://www.geeksforgeeks.org/get-the-first-parts-of-a-data-set-in-r-programming-head-function/"><code>head()</code></a>:</p>
+<p><code>{r head-of-the-data} head(variants)</code></p>
+<p>```{r, echo = FALSE, eval = TRUE, purl = FALSE} ## silently read in
+CSV file from FigShare</p>
+<h1 id="variants-readcsvhttpsndownloaderfigsharecomfiles14632895_1">variants \&lt;- read.csv("<a href="https://ndownloader.figshare.com/files/14632895">https://ndownloader.figshare.com/files/14632895</a>")<a class="headerlink" href="#variants-readcsvhttpsndownloaderfigsharecomfiles14632895_1" title="Permanent link">¶</a></h1>
+<h1 id="variants-readcsvhttpsrawgithubusercontentcomnaupakavcfr-for-data-carpentry-draftmainoutputcombined_tidy_vcfcsv">variants = read.csv("<a href="https://raw.githubusercontent.com/naupaka/vcfr-for-data-carpentry-draft/main/output/combined_tidy_vcf.csv">https://raw.githubusercontent.com/naupaka/vcfr-for-data-carpentry-draft/main/output/combined_tidy_vcf.csv</a>")<a class="headerlink" href="#variants-readcsvhttpsrawgithubusercontentcomnaupakavcfr-for-data-carpentry-draftmainoutputcombined_tidy_vcfcsv" title="Permanent link">¶</a></h1>
+<div class="highlight"><pre><span></span><code>**`ggplot2`** functions like data in the **long** format, i.e., a column for every dimension (variable), and a row for every observation. Well-structured data will save you time when making figures with **`ggplot2`**
+
+**`ggplot2`** graphics are built step-by-step by adding new elements. Adding layers in this fashion allows for extensive flexibility and customization of plots, and more equally important the readability of the code.
+
+To build a ggplot, we will use the following basic template that can be used for different types of plots:
+
+```{r, eval=FALSE}
+ggplot(data = &lt;DATA&gt;, mapping = aes(&lt;MAPPINGS&gt;)) +  &lt;GEOM_FUNCTION&gt;()
+</code></pre></div>
+<ul>
+<li>use the <code>ggplot()</code> function and bind the plot to a specific data
+    frame using the <code>data</code> argument</li>
+</ul>
+<p><code>{r, eval=FALSE, purl=FALSE} ggplot(data = variants)</code></p>
+<ul>
+<li>define a mapping (using the aesthetic (<code>aes</code>) function), by
+    selecting the variables to be plotted and specifying how to present
+    them in the graph, e.g. as x and y positions or characteristics such
+    as size, shape, color, etc.</li>
+</ul>
+<p><code>{r, eval=FALSE, purl=FALSE} ggplot(data = variants, aes(x = POS, y = DP))</code></p>
+<ul>
+<li>add 'geoms' -- graphical representations of the data in the plot
+    (points, lines, bars). <strong><code>ggplot2</code></strong> offers many different geoms; we
+    will use some common ones today, including:<ul>
+<li><a href="https://ggplot2.tidyverse.org/reference/geom_point.html"><code>geom_point()</code></a>
+    for scatter plots, dot plots, etc.</li>
+<li><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html"><code>geom_boxplot()</code></a>
+    for, well, boxplots!</li>
+<li><a href="https://ggplot2.tidyverse.org/reference/geom_path.html"><code>geom_line()</code></a>
+    for trend lines, time series, etc.</li>
+</ul>
+</li>
+</ul>
+<p>To add a geom to the plot use the <code>+</code> operator. Because we have two
+continuous variables, let's use
+<a href="https://ggplot2.tidyverse.org/reference/geom_point.html"><code>geom_point()</code></a>
+(i.e., a scatter plot) first:</p>
+<p><code>{r first-ggplot, purl=FALSE} ggplot(data = variants, aes(x = POS, y = DP)) +   geom_point()</code></p>
+<p>The <code>+</code> in the <strong><code>ggplot2</code></strong> package is particularly useful because it
+allows you to modify existing <code>ggplot</code> objects. This means you can
+easily set up plot templates and conveniently explore different types of
+plots, so the above plot can also be generated with code like this:</p>
+<p>```{r, first-ggplot-with-plus, eval=FALSE, purl=FALSE} # Assign plot
+to a variable coverage_plot \&lt;- ggplot(data = variants, aes(x = POS, y =
+DP))</p>
+<h1 id="draw-the-plot">Draw the plot<a class="headerlink" href="#draw-the-plot" title="Permanent link">¶</a></h1>
+<p>coverage_plot + geom_point()</p>
+<div class="highlight"><pre><span></span><code>**Notes**
+
+- Anything you put in the [`ggplot()`](https://ggplot2.tidyverse.org/reference/ggplot.html) function can be seen by any geom layers that you add (i.e., these are universal plot settings). This includes the x- and y-axis mapping you set up in [`aes()`](https://ggplot2.tidyverse.org/reference/aes.html).
+- You can also specify mappings for a given geom independently of the mappings defined globally in the [`ggplot()`](https://ggplot2.tidyverse.org/reference/ggplot.html) function.
+- The `+` sign used to add new layers must be placed at the end of the line containing the *previous* layer. If, instead, the `+` sign is added at the beginning of the line containing the new layer, **`ggplot2`** will not add the new layer and will return an error message.
+
+```{r, ggplot-with-plus-position, eval=FALSE, purl=FALSE}
+# This is the correct syntax for adding layers
+coverage_plot +
+  geom_point()
+
+# This will not add the new layer and will return an error message
+coverage_plot
+  + geom_point()
+</code></pre></div>
+<h2 id="building-your-plots-iteratively">Building your plots iteratively<a class="headerlink" href="#building-your-plots-iteratively" title="Permanent link">¶</a></h2>
+<p>Building plots with <strong><code>ggplot2</code></strong> is typically an iterative process. We
+start by defining the dataset we'll use, lay out the axes, and choose a
+geom:</p>
+<p><code>{r create-ggplot-object, purl=FALSE} ggplot(data = variants, aes(x = POS, y = DP)) +   geom_point()</code></p>
+<p>Then, we start modifying this plot to extract more information from it.
+For instance, we can add transparency (<code>alpha</code>) to avoid over-plotting:</p>
+<p><code>{r adding-transparency, purl=FALSE} ggplot(data = variants, aes(x = POS, y = DP)) +     geom_point(alpha = 0.5)</code></p>
+<p>We can also add colors for all the points:</p>
+<p>```{r adding-colors, purl=FALSE}</p>
+<p>ggplot(data = variants, aes(x = POS, y = DP)) + geom_point(alpha = 0.5,
+color = "blue")</p>
+<div class="highlight"><pre><span></span><code>Or to color each species in the plot differently, you could use a vector as an input to the argument **color**. **`ggplot2`** will provide a different color corresponding to different values in the vector. Here is an example where we color with **`sample_id`**:
+
+```{r color-by-sample-1, purl=FALSE}
+ggplot(data = variants, aes(x = POS, y = DP, color = sample_id)) +
+  geom_point(alpha = 0.5)
+</code></pre></div>
+<p>Notice that we can change the geom layer and colors will be still
+determined by <strong><code>sample_id</code></strong></p>
+<p><code>{r color-by-sample-2, purl=FALSE} ggplot(data = variants, aes(x = POS, y = DP, color = sample_id)) +   geom_point(alpha = 0.5)</code></p>
+<p>To make our plot more readable, we can add axis labels:</p>
+<p><code>{r add-axis-labels, purl=FALSE} ggplot(data = variants, aes(x = POS, y = DP, color = sample_id)) +   geom_point(alpha = 0.5) +   labs(x = "Base Pair Position",        y = "Read Depth (DP)")</code></p>
+<p>To add a <em>main</em> title to the plot, we use
+<a href="https://ggplot2.tidyverse.org/reference/labs.html"><code>ggtitle()</code></a>:</p>
+<p><code>{r add-main-title, purl=FALSE} ggplot(data = variants, aes(x = POS, y = DP, color = sample_id)) +   geom_point(alpha = 0.5) +   labs(x = "Base Pair Position",        y = "Read Depth (DP)") +   ggtitle("Read Depth vs. Position")</code></p>
+<p>Now the figure is complete and ready to be exported and saved to a file.
+This can be achieved easily using
+<a href="https://ggplot2.tidyverse.org/reference/ggsave.html"><code>ggsave()</code></a>, which
+can write, by default, the most recent generated figure into different
+formats (e.g., <code>jpeg</code>, <code>png</code>, <code>pdf</code>) according to the file extension.
+So, for example, to create a pdf version of the above figure with a
+dimension of <span class="arithmatex">\(6\times4\)</span> inches:</p>
+<p><code>{r save-to-file, purl=FALSE} ggsave ("depth.pdf", width = 6, height = 4)</code></p>
+<p>If we check the <em>current working directory</em>, there should be a newly
+created file called <code>depth.pdf</code> with the above plot.</p>
+<blockquote>
+<h2 id="challenge">Challenge<a class="headerlink" href="#challenge" title="Permanent link">¶</a></h2>
+<p>Use what you just learned to create a scatter plot of mapping quality
+(<code>MQ</code>) over position (<code>POS</code>) with the samples showing in different
+colors. Make sure to give your plot relevant axis labels.</p>
+<blockquote>
+<h2 id="solution">Solution<a class="headerlink" href="#solution" title="Permanent link">¶</a></h2>
+<p><code>{r scatter-challenge, purl=FALSE}  ggplot(data = variants, aes(x = POS, y = MQ, color = sample_id)) +   geom_point() +   labs(x = "Base Pair Position",        y = "Mapping Quality (MQ)")</code>
+{: .solution} {: .challenge}</p>
+</blockquote>
+</blockquote>
+<p>To further customize the plot, we can change the default font format:</p>
+<p><code>{r change-font-family, purl=FALSE} ggplot(data = variants, aes(x = POS, y = DP, color = sample_id)) +   geom_point(alpha = 0.5) +   labs(x = "Base Pair Position",        y = "Read Depth (DP)") +   ggtitle("Read Depth vs. Position") +   theme(text = element_text(family = "Bookman"))</code></p>
+<h2 id="faceting">Faceting<a class="headerlink" href="#faceting" title="Permanent link">¶</a></h2>
+<p><strong><code>ggplot2</code></strong> has a special technique called <em>faceting</em> that allows the
+user to split one plot into multiple plots (panels) based on a factor
+(variable) included in the dataset. We will use it to split our mapping
+quality plot into three panels, one for each sample.</p>
+<p><code>{r first-facet, purl=FALSE} ggplot(data = variants, aes(x = POS, y = MQ, color = sample_id)) +  geom_point() +  labs(x = "Base Pair Position",       y = "Mapping Quality (MQ)") +  facet_grid(. ~ sample_id)</code></p>
+<p>This looks okay, but it would be easier to read if the plot facets were
+stacked vertically rather than horizontally. The <code>facet_grid</code> geometry
+allows you to explicitly specify how you want your plots to be arranged
+via formula notation (<code>rows ~ columns</code>; the dot (<code>.</code>) indicates every
+other variable in the data i.e., no faceting on that side of the
+formula).</p>
+<p><code>{r second-facet, purl=FALSE} ggplot(data = variants, aes(x = POS, y = MQ, color = sample_id)) +  geom_point() +  labs(x = "Base Pair Position",       y = "Mapping Quality (MQ)") +  facet_grid(sample_id ~ .)</code></p>
+<p>Usually plots with white background look more readable when printed. We
+can set the background to white using the function
+<a href="https://ggplot2.tidyverse.org/reference/ggtheme.html"><code>theme_bw()</code></a>.
+Additionally, you can remove the grid:</p>
+<p><code>{r facet-plot-white-bg, purl=FALSE} ggplot(data = variants, aes(x = POS, y = MQ, color = sample_id)) +   geom_point() +   labs(x = "Base Pair Position",        y = "Mapping Quality (MQ)") +   facet_grid(sample_id ~ .) +   theme_bw() +   theme(panel.grid = element_blank())</code></p>
+<blockquote>
+<h2 id="challenge_1">Challenge<a class="headerlink" href="#challenge_1" title="Permanent link">¶</a></h2>
+<p>Use what you just learned to create a scatter plot of PHRED scaled
+quality (<code>QUAL</code>) over position (<code>POS</code>) with the samples showing in
+different colors. Make sure to give your plot relevant axis labels.</p>
+<blockquote>
+<h2 id="solution_1">Solution<a class="headerlink" href="#solution_1" title="Permanent link">¶</a></h2>
+<p><code>{r scatter-challenge-2, purl=FALSE}  ggplot(data = variants, aes(x = POS, y = QUAL, color = sample_id)) +   geom_point() +   labs(x = "Base Pair Position",        y = "PHRED-sacled Quality (QUAL)") +   facet_grid(sample_id ~ .)</code>
+{: .solution} {: .challenge}</p>
+</blockquote>
+</blockquote>
+<h2 id="barplots">Barplots<a class="headerlink" href="#barplots" title="Permanent link">¶</a></h2>
+<p>We can create barplots using the
+<a href="https://ggplot2.tidyverse.org/reference/geom_bar.html"><code>geom_bar</code></a>
+geom. Let's make a barplot showing the number of variants for each
+sample that are indels.</p>
+<p><code>{r barplot, purl=FALSE} ggplot(data = variants, aes(x = INDEL, fill = sample_id)) +   geom_bar() +   facet_grid(sample_id ~ .)</code></p>
+<blockquote>
+<h2 id="challenge_2">Challenge<a class="headerlink" href="#challenge_2" title="Permanent link">¶</a></h2>
+<p>Since we already have the sample_id labels on the individual plot
+facets, we don't need the legend. Use the help file for <code>geom_bar</code> and
+any other online resources you want to use to remove the legend from
+the plot.</p>
+<blockquote>
+<h2 id="solution_2">Solution<a class="headerlink" href="#solution_2" title="Permanent link">¶</a></h2>
+<p><code>{r barplot-challenge, purl=FALSE} ggplot(data = variants, aes(x = INDEL, color = sample_id)) +    geom_bar(show.legend = F) +    facet_grid(sample_id ~ .)</code>
+{: .solution} {: .challenge}</p>
+</blockquote>
+</blockquote>
+<h2 id="density">Density<a class="headerlink" href="#density" title="Permanent link">¶</a></h2>
+<p>We can create density plots using the
+<a href="https://ggplot2.tidyverse.org/reference/geom_density.html"><code>geom_density</code></a>
+geom that shows the distribution of of a variable in the dataset. Let's
+plot the distribution of <code>DP</code></p>
+<p><code>{r density, purl=FALSE} ggplot(data = variants, aes(x = DP)) +   geom_density()</code></p>
+<p>This plot tells us that the most of frequent <code>DP</code> (read depth) for the
+variants is about 10 reads.</p>
+<blockquote>
+<h2 id="challenge_3">Challenge<a class="headerlink" href="#challenge_3" title="Permanent link">¶</a></h2>
+<p>Use
+<a href="https://ggplot2.tidyverse.org/reference/geom_density.html"><code>geom_density</code></a>
+to plot the distribution of <code>DP</code> with a different fill for each
+sample. Use a white background for the plot.</p>
+<blockquote>
+<h2 id="solution_3">Solution<a class="headerlink" href="#solution_3" title="Permanent link">¶</a></h2>
+<p><code>{r density-challenge, purl=FALSE} ggplot(data = variants, aes(x = DP, fill = sample_id)) +    geom_density(alpha = 0.5) +    theme_bw()</code>
+{: .solution} {: .challenge}</p>
+</blockquote>
+</blockquote>
+<h2 id="ggplot2-themes"><strong><code>ggplot2</code></strong> themes<a class="headerlink" href="#ggplot2-themes" title="Permanent link">¶</a></h2>
+<p>In addition to
+<a href="https://ggplot2.tidyverse.org/reference/ggtheme.html"><code>theme_bw()</code></a>,
+which changes the plot background to white, <strong><code>ggplot2</code></strong> comes with
+several other themes which can be useful to quickly change the look of
+your visualization. The complete list of themes is available at
+<a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">https://ggplot2.tidyverse.org/reference/ggtheme.html</a>.
+<code>theme_minimal()</code> and <code>theme_light()</code> are popular, and <code>theme_void()</code>
+can be useful as a starting point to create a new hand-crafted theme.</p>
+<p>The <a href="https://jrnold.github.io/ggthemes/reference/index.html">ggthemes</a>
+package provides a wide variety of options (including Microsoft Excel,
+<a href="https://jrnold.github.io/ggthemes/reference/theme_excel.html">old</a> and
+<a href="https://jrnold.github.io/ggthemes/reference/theme_excel_new.html">new</a>).
+The <a href="https://exts.ggplot2.tidyverse.org/"><strong><code>ggplot2</code></strong> extensions
+website</a> provides a list of
+packages that extend the capabilities of <strong><code>ggplot2</code></strong>, including
+additional themes.</p>
+<blockquote>
+<h2 id="challenge_4">Challenge<a class="headerlink" href="#challenge_4" title="Permanent link">¶</a></h2>
+<p>With all of this information in hand, please take another five minutes
+to either improve one of the plots generated in this exercise or
+create a beautiful graph of your own. Use the RStudio <a href="https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf"><strong><code>ggplot2</code></strong>
+cheat
+sheet</a>
+for inspiration. Here are some ideas:</p>
+<ul>
+<li>See if you can change the size or shape of the plotting symbol.</li>
+<li>Can you find a way to change the name of the legend? What about
+    its labels?</li>
+<li>Try using a different color palette (see the <a href="http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/">Cookbook for
+    R</a>. {:
+    .challenge}</li>
+</ul>
+</blockquote>
+<h2 id="more-ggplot2-plots">More <strong><code>ggplot2</code></strong> Plots<a class="headerlink" href="#more-ggplot2-plots" title="Permanent link">¶</a></h2>
+<p><strong><code>ggplot2</code></strong> offers many more informative and beautiful plots (<code>geoms</code>)
+of interest for biologists (although not covered in this lesson) that
+are worth exploring, such as</p>
+<ul>
+<li><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html"><code>geom_tile()</code></a>,
+    for heatmaps,</li>
+<li><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html"><code>geom_jitter()</code></a>,
+    for strip charts, and</li>
+<li><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html"><code>geom_violin()</code></a>,
+    for violin plots</li>
+</ul>
+<h2 id="resources">Resources<a class="headerlink" href="#resources" title="Permanent link">¶</a></h2>
+<ul>
+<li><a href="https://www.amazon.com/gp/product/331924275X/">ggplot2: Elegant Graphics for Data
+    Analysis</a> (<a href="https://ggplot2-book.org/">online
+    version</a>)</li>
+<li><a href="https://www.amazon.com/Grammar-Graphics-Statistics-Computing/dp/0387245448/">The Grammar of Graphics (Statistics and
+    Computing)</a></li>
+<li><a href="https://www.amazon.com/gp/product/0691181624/">Data Visualization: A Practical
+    Introduction</a>
+    (<a href="https://socviz.co/">online version</a>)</li>
+<li><a href="https://r-graph-gallery.com/">The R Graph Gallery</a> (<a href="https://bookdown.org/content/b298e479-b1ab-49fa-b83d-a57c2b034d49/">the
+    book</a>)</li>
+</ul>
+</article>
+</div>
+</div>
+<a class="md-top md-icon" data-md-component="top" hidden="" href="#">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"></path></svg>
+            Back to top
+          </a>
+</main>
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "..", "features": ["navigation.tracking", "navigation.sections", "navigation.expand", "navigation.top"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+<script src="../assets/javascripts/bundle.2a6f1dda.min.js"></script>
+<script src="../javascripts/mathjax.js"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>document$.subscribe(() => {const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});})</script></body>
+</html>
